@@ -1,0 +1,37 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.env
+.venv
+venv/
+build/
+dist/
+pip-wheel-metadata/
+
+# Editors
+.vscode/
+.idea/
+
+# Data
+data/processed/*
+data/embeddings/*
+data/raw/*
+!data/processed/.gitkeep
+!data/embeddings/.gitkeep
+!data/raw/.gitkeep
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Logs
+logs/
+*.log
+
+# Docker
+*.pid
+
+
+notes/
+examples/
