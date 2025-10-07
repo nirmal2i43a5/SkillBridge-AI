@@ -57,3 +57,34 @@ if example_jobs and st.sidebar.button("Index RemoteOK jobs"):
 uploaded = st.file_uploader("Resume (PDF)", type=["pdf"])
 text_input = st.text_area("Or paste resume text", height=200)
 
+# ------------------------------
+# Main: Get Recommendations
+# ------------------------------
+if st.button("Get recommendations"):
+    resp = None
+    if uploaded is not None:
+        files = {"upload": (uploaded.name, uploaded.read(), "application/pdf")}
+        resp = requests.post(
+            f"{API_URL}/recommend/file",
+            files=files,
+            data={"top_k": top_k},
+            timeout=60,
+        )
+    elif text_input.strip():
+        payload = {"resume_text": text_input, "top_k": top_k}
+        resp = requests.post(f"{API_URL}/recommend/text", json=payload, timeout=30)
+    else:
+        st.warning("Please upload a PDF or paste resume text.")
+
+    if resp is not None:
+        if resp.ok:
+            results: List[dict] = resp.json().get("recommendations", [])
+            if not results:
+                st.info("No recommendations found.")
+            else:
+                for rec in results:
+                    st.subheader(f"{rec['title']} ({rec.get('company') or 'Company N/A'})")
+                    st.write(f"📊 Match score: {rec['score']:.3f}")
+                    st.write(f"✅ Matched skills: {', '.join(rec['matched_skills']) or 'n/a'}")
+        else:
+            st.error(f"Backend error: {resp.text}")
