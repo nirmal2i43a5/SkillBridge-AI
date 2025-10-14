@@ -61,15 +61,7 @@ class VectorStore:
         faiss.normalize_L2(embeddings)
         self._index.add(embeddings.astype(np.float32))
 
-    # def _add_with_sklearn(self, embeddings: np.ndarray) -> None:
-    #     new_embeddings = embeddings.astype(np.float32)
-    #     if self._sk_embeddings is None:
-    #         self._sk_embeddings = new_embeddings
-    #     else:
-    #         self._sk_embeddings = np.vstack([self._sk_embeddings, new_embeddings])
-    #     if self._index is None:
-    #         self._index = NearestNeighbors(metric="cosine")
-    #     self._index.fit(self._sk_embeddings)
+    
 
     def search(self, query_embeddings: np.ndarray, k: int = 5) -> List[List[RetrievedItem]]:
         if self._index is None:
