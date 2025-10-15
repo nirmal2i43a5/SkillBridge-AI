@@ -1,15 +1,8 @@
 from __future__ import annotations
-
 from typing import Iterable, List
-
 import logging
 import numpy as np
-
-try:
-    from sentence_transformers import SentenceTransformer  # type: ignore
-except ImportError:  # pragma: no cover
-    SentenceTransformer = None  # type: ignore
-
+from sentence_transformers import SentenceTransformer 
 from ..utils.logging_utils import setup_logging
 
 logger = logging.getLogger(__name__)
