@@ -9,57 +9,66 @@ import streamlit as st
 # Backend API URL (local by default, can override with env var)
 API_URL = os.getenv("SKILLMATCH_API_URL", "http://localhost:8000")
 
-# ------------------------------
+
 # Streamlit Page Setup
-# ------------------------------
 st.set_page_config(page_title="Resume Skill Matcher", layout="wide")
 st.title("Resume Skill Matcher")
 
 st.write("Upload a resume and discover matching job postings.")
 
-# ------------------------------
 # Sidebar: Job Indexing
-# ------------------------------
 with st.sidebar:
     st.header("Job Indexing")
-    example_jobs = st.checkbox("Load RemoteOK jobs", value=True)
+    load_adzuna_jobs = st.checkbox("Load Adzuna jobs", value=True)
     top_k = st.slider("Top K", min_value=1, max_value=10, value=5)
 
-if example_jobs and st.sidebar.button("Index RemoteOK jobs"):
-    try:
-        resp_api = requests.get("https://remoteok.io/api", headers={"User-Agent": "Mozilla/5.0"})
-        if resp_api.ok:
-            jobs = resp_api.json()[1:]  # first element is metadata
+
+ADZUNA_JOBS_PATH = Path(__file__).resolve().parents[2] / "data" / "processed" / "adzuna_data_jobs.json"
+
+if load_adzuna_jobs and st.sidebar.button("Index Adzuna Jobs"):
+    if not ADZUNA_JOBS_PATH.exists():
+        st.error(f"Error: {ADZUNA_JOBS_PATH.name} not found.")
+        st.info("Please run the data collection script first.")
+    else:
+        try:
+            with open(ADZUNA_JOBS_PATH, "r", encoding="utf-8") as f:
+                jobs = json.load(f)
 
             payload = {"jobs": []}
             for job in jobs:
+                # Map all new AdzunaJob fields to the payload
                 payload["jobs"].append({
                     "job_id": str(job.get("id")),
-                    "title": job.get("position"),
-                    "description": job.get("description"),
+                    "title": job.get("job_title"),
+                    "description": job.get("job_description"),
                     "company": job.get("company"),
                     "location": job.get("location"),
+                    "url": job.get("job_url"),
+                    "posted_date": job.get("posted_date"),
+                    "category": job.get("category"),
+                    "job_type": job.get("job_type"),
+                    "experience_level": job.get("experience_level"),
+                    "role_type": job.get("role_type"),
+                    "skills": job.get("skills", []),
+                    "tags": job.get("tags", []),
                 })
 
-            resp = requests.post(f"{API_URL}/jobs/index", json=payload, timeout=30)
+            resp = requests.post(f"{API_URL}/jobs/index", json=payload, timeout=100)
             if resp.ok:
-                st.success(f"Indexed {resp.json().get('indexed')} jobs from RemoteOK")
+                st.success(f"Indexed {resp.json().get('indexed')} jobs from {ADZUNA_JOBS_PATH.name}")
             else:
                 st.error(f"Backend error: {resp.text}")
-        else:
-            st.error(f"RemoteOK API failed with status {resp_api.status_code}")
-    except Exception as e:
-        st.error(f"Error fetching RemoteOK jobs: {e}")
+        except Exception as e:
+            st.error(f"Error processing Adzuna jobs file: {e}")
 
-# ------------------------------
-# Main: Resume Input
-# ------------------------------
+
+# Resume Input
 uploaded = st.file_uploader("Resume (PDF)", type=["pdf"])
 text_input = st.text_area("Or paste resume text", height=200)
 
-# ------------------------------
-# Main: Get Recommendations
-# ------------------------------
+
+#  Get Recommendations
+
 if st.button("Get recommendations"):
     resp = None
     if uploaded is not None:
@@ -83,8 +92,28 @@ if st.button("Get recommendations"):
                 st.info("No recommendations found.")
             else:
                 for rec in results:
-                    st.subheader(f"{rec['title']} ({rec.get('company') or 'Company N/A'})")
-                    st.write(f"📊 Match score: {rec['score']:.3f}")
-                    st.write(f"✅ Matched skills: {', '.join(rec['matched_skills']) or 'n/a'}")
+                    st.subheader(f"{rec.get('title')} at {rec.get('company') or 'N/A'}")
+                    
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("Match Score", f"{rec.get('score', 0):.2%}")
+                    with col2:
+                        st.metric("Experience Level", rec.get('experience_level') or 'N/A')
+                    with col3:
+                        st.metric("Job Type", rec.get('job_type') or 'N/A')
+
+                    st.write(f"**Location:** {rec.get('location') or 'N/A'}")
+                    st.write(f"**Role:** {rec.get('role_type') or 'N/A'}")
+
+                    with st.expander("Matched Skills"):
+                        st.info(f"{', '.join(rec.get('matched_skills', [])) or 'None'}")
+                    
+                    with st.expander("All Job Skills"):
+                        st.success(f"{', '.join(rec.get('skills', [])) or 'None'}")
+                        
+                    if rec.get('url'):
+                        st.link_button("View Job Posting", rec['url'])
+                    
+                    st.divider()
         else:
             st.error(f"Backend error: {resp.text}")
