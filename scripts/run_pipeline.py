@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from src.features.embedding_generator import EmbeddingGenerator
+from src.embeddings.text_embedder import TextEmbedder
 from src.recommender.recommender import JobPosting, ResumeRecommender
 
 
@@ -22,7 +22,7 @@ def main() -> None:
     job_payload = json.loads(args.jobs.read_text(encoding="utf-8"))
     jobs = [JobPosting(**entry) for entry in job_payload["jobs"]]
 
-    recommender = ResumeRecommender(embedding_generator=EmbeddingGenerator(prefer_tfidf=True))
+    recommender = ResumeRecommender(embedding_generator=TextEmbedder())
     recommender.index_jobs(jobs)
     recommendations = recommender.recommend_for_resume_text(resume_text, top_k=args.top_k)
 
