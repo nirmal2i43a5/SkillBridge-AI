@@ -2,12 +2,11 @@
 
 from pathlib import Path
 from typing import List
-
 import logging
 import tempfile
 from fastapi import APIRouter, File, HTTPException, UploadFile
-from pydantic import BaseModel
-
+from pydantic import BaseModel, Field
+from dataclasses import asdict
 from ..recommender.recommender import JobPosting, ResumeRecommender
 from ..utils.logging_utils import setup_logging
 
@@ -19,11 +18,20 @@ recommender = ResumeRecommender()
 
 
 class JobPostingPayload(BaseModel):
+    """Payload for indexing a job, now with all fields."""
     job_id: str
     title: str
     description: str
     company: str | None = None
     location: str | None = None
+    url: str | None = None
+    posted_date: str | None = None
+    category: str | None = None
+    job_type: str | None = None
+    experience_level: str | None = None
+    role_type: str | None = None
+    skills: List[str] = Field(default_factory=list)
+    tags: List[str] = Field(default_factory=list)
 
 
 class IndexJobsRequest(BaseModel):
@@ -52,19 +60,9 @@ async def recommend_from_text(payload: RecommendationRequest) -> dict:
         recs = recommender.recommend_for_resume_text(payload.resume_text, top_k=payload.top_k)
     except RuntimeError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    return {
-        "recommendations": [
-            {
-                "job_id": rec.job.job_id,
-                "title": rec.job.title,
-                "company": rec.job.company,
-                "location": rec.job.location,
-                "score": rec.score,
-                "matched_skills": rec.matched_skills,
-            }
-            for rec in recs
-        ]
-    }
+    # Return all the new job fields in the response
+    recommendation_results = {"recommendations": [rec.job.dict() | {"score": rec.score, "matched_skills": rec.matched_skills} for rec in recs]}
+    return recommendation_results 
 
 
 @router.post("/recommend/file")
@@ -85,16 +83,12 @@ async def recommend_from_file(upload: UploadFile = File(...), top_k: int = 5) ->
             tmp_path.unlink()
         except OSError:
             logger.warning("Failed to clean up temp file %s", tmp_path)
-    return {
-        "recommendations": [
-            {
-                "job_id": rec.job.job_id,
-                "title": rec.job.title,
-                "company": rec.job.company,
-                "location": rec.job.location,
-                "score": rec.score,
-                "matched_skills": rec.matched_skills,
-            }
-            for rec in recs
-        ]
-    }
+    # Return all the new job fields in the response
+    recommendation_results = {
+    "recommendations": [
+        {**asdict(rec.job), "score": rec.score, "matched_skills": rec.matched_skills}
+        for rec in recs
+    ]
+}
+ 
+    return recommendation_results
