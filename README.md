@@ -15,7 +15,7 @@ The application is built on a decoupled frontend-backend architecture, container
 - **Recommender Engine**: The core logic, encapsulated within the backend, handles PDF parsing, text processing, skill extraction, embedding generation, and similarity search.
 - **Data Storage**: Job postings are ingested from external sources (e.g., Adzuna API) and stored as JSON files. Vector embeddings are managed in-memory using FAISS for fast retrieval.
 
-  ![1760557920253](image/TECH_SPEC/1760557920253.png)
+  ![Skill-Matches workflow](https://github.com/user-attachments/assets/6d8c6354-5569-4950-843f-f03909f1cfea)
 
 ## 3. Component Breakdown
 
