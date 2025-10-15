@@ -1,4 +1,4 @@
-# Technical Specification: Resume Skill Matcher
+# Resume Skill Matcher
 
 This document outlines the technical details of the Resume Skill Matcher application, a system designed to connect job seekers with relevant opportunities by analyzing their resumes against job postings.
 
