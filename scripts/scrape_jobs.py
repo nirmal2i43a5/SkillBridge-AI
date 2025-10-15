@@ -1,6 +1,4 @@
-﻿#!/usr/bin/env python
-"""CLI helper to fetch job postings from the Adzuna API."""
-import argparse
+﻿import argparse
 from pathlib import Path
 import sys
 
@@ -10,6 +8,7 @@ if str(project_root) not in sys.path:
     sys.path.append(str(project_root))
 
 from src.data_collection.adzuna_client import fetch_all_data_jobs
+
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
@@ -31,6 +30,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     """Main function to run the scraper."""
+    
     args = parse_args()
     print(f"Starting Adzuna job fetcher...")
     print(f" - Location: {args.location}")

@@ -1,6 +1,4 @@
-﻿#!/usr/bin/env python
-"""Launch the Streamlit frontend."""
-import subprocess
+﻿import subprocess
 import sys
 from pathlib import Path
 

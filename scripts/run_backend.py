@@ -1,6 +1,4 @@
-﻿#!/usr/bin/env python
-"""Run the FastAPI backend with live reload."""
-
+﻿
 import sys
 import os
 from pathlib import Path   

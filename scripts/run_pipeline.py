@@ -1,6 +1,4 @@
-﻿#!/usr/bin/env python
-"""CLI helper to run the end-to-end recommendation pipeline."""
-import argparse
+﻿import argparse
 import json
 from pathlib import Path
 
@@ -9,7 +7,7 @@ from src.recommender.recommender import JobPosting, ResumeRecommender
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Resume → Job recommendation pipeline")
+    parser = argparse.ArgumentParser(description="Resume -> Job recommendation pipeline")
     parser.add_argument("resume", type=Path, help="Path to resume text file")
     parser.add_argument("jobs", type=Path, help="Path to JSON job postings (list of dicts)")
     parser.add_argument("--top-k", type=int, default=5)
