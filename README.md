@@ -1,7 +1,5 @@
 # Resume Skill Matcher
 
-This document outlines the technical details of the Resume Skill Matcher application, a system designed to connect job seekers with relevant opportunities by analyzing their resumes against job postings.
-
 ## 1. Project Overview
 
 The Resume Skill Matcher is an end-to-end system that parses resumes, extracts key skills, and recommends the most relevant job postings from a corpus. It features a web-based interface for resume submission and a RESTful API for managing job data and generating recommendations. The core of the system lies in its ability to generate semantic embeddings for both resumes and job descriptions, enabling efficient similarity-based matching.
