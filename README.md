@@ -68,7 +68,7 @@ This is the core component responsible for the matching logic.
 1. **Prerequisites**: Docker and Docker Compose must be installed.
 2. **Installation**: Clone the repository and build the Docker containers:
    ```bash
-   git clone https://github.com/nirmal2i43a5/Skill-Match.git
+   git clone https://github.com/nirmal2i43a5/Skill-Match.git](https://github.com/nirmal2i43a5/SkillMatcher.git
    cd resume-skill-matcher
    docker-compose build
    ```
