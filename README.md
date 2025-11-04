@@ -1,8 +1,8 @@
-# Resume Skill Matcher
+# SkillBridge AI
 
 ## 1. Project Overview
 
-The Resume Skill Matcher is an end-to-end system that parses resumes, extracts key skills, and recommends the most relevant job postings from a corpus. It features a web-based interface for resume submission and a RESTful API for managing job data and generating recommendations. The core of the system lies in its ability to generate semantic embeddings for both resumes and job descriptions, enabling efficient similarity-based matching.
+The SkillBridge AI is an end-to-end system that parses resumes, extracts key skills, and recommends the most relevant job postings from a corpus. It features a web-based interface for resume submission and a RESTful API for managing job data and generating recommendations. The core of the system lies in its ability to generate semantic embeddings for both resumes and job descriptions, enabling efficient similarity-based matching.
 
 ## 2. System Architecture
 
