@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import List
 
@@ -16,6 +17,8 @@ setup_logging()
 
 router = APIRouter()
 recommender = ResumeRecommender()
+# Track last index time for status endpoint
+recommender._last_index_time: datetime | None = None
 
 
 class JobPostingPayload(BaseModel):
@@ -41,6 +44,8 @@ async def index_jobs(payload: IndexJobsRequest) -> dict:
         raise HTTPException(status_code=400, detail="No jobs provided")
     job_objects = [JobPosting(**job.dict()) for job in payload.jobs]
     recommender.index_jobs(job_objects)
+    # Track when indexing happened
+    recommender._last_index_time = datetime.now(timezone.utc)
     return {"indexed": len(job_objects)}
 
 
