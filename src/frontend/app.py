@@ -2,12 +2,13 @@
 import os
 from pathlib import Path
 from typing import List
+import hashlib
 
 import requests
 import streamlit as st
 
 # Backend API URL (local by default, can override with env var)
-API_URL = os.getenv("SKILLMATCH_API_URL", "http://localhost:8000")
+API_URL = os.getenv("FASTAPI_URL", "http://127.0.0.1:8000")
 
 
 # Streamlit Page Setup
@@ -36,9 +37,13 @@ if load_adzuna_jobs and st.sidebar.button("Index Adzuna Jobs"):
 
             payload = {"jobs": []}
             for job in jobs:
+                # Generate unique job_id from URL or title+company combination
+                unique_str = job.get("job_url") or f"{job.get('job_title', '')}_{job.get('company', '')}_{job.get('location', '')}"
+                job_id = hashlib.md5(unique_str.encode()).hexdigest()
+                
                 # Map all new AdzunaJob fields to the payload
                 payload["jobs"].append({
-                    "job_id": str(job.get("id")),
+                    "job_id": job_id,
                     "title": job.get("job_title"),
                     "description": job.get("job_description"),
                     "company": job.get("company"),
@@ -52,12 +57,21 @@ if load_adzuna_jobs and st.sidebar.button("Index Adzuna Jobs"):
                     "skills": job.get("skills", []),
                     "tags": job.get("tags", []),
                 })
-
-            resp = requests.post(f"{API_URL}/jobs/index", json=payload, timeout=100)
-            if resp.ok:
-                st.success(f"Indexed {resp.json().get('indexed')} jobs from {ADZUNA_JOBS_PATH.name}")
+            
+            # First, persist to database
+            resp_persist = requests.post(f"{API_URL}/jobs/index/persist", json=payload, timeout=100)
+            if not resp_persist.ok:
+                st.error(f"Backend error (persist): {resp_persist.text}")
             else:
-                st.error(f"Backend error: {resp.text}")
+                # Then, index in FAISS for recommendations
+                resp_index = requests.post(f"{API_URL}/jobs/index", json=payload, timeout=100)
+                if resp_index.ok:
+                    st.success(f"Indexed {resp_index.json().get('indexed')} jobs in recommender and persisted {resp_persist.json().get('inserted')} new jobs to database")
+                else:
+                    st.warning(f"Jobs saved to database, but indexing failed: {resp_index.text}")
+        except requests.exceptions.ConnectionError as e:
+            st.error(f"Cannot connect to backend at {API_URL}. Is the backend server running?")
+            st.info(f"Error details: {str(e)}")
         except Exception as e:
             st.error(f"Error processing Adzuna jobs file: {e}")
 
