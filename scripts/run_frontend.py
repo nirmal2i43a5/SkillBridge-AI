@@ -2,7 +2,7 @@
 import sys
 from pathlib import Path
 
-APP_PATH = Path(__file__).resolve().parent.parent / "src" / "frontend" / "app.py"
+APP_PATH = Path(__file__).resolve().parent.parent / "frontend" / "app.py"
 
 if __name__ == "main__":
     raise SystemExit("Please run as a module")
