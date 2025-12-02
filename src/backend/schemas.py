@@ -25,3 +25,17 @@ class IndexJobsRequest(BaseModel):
 class RecommendationRequest(BaseModel):
     resume_text: str
     top_k: int = 5
+
+class ResumeBase(BaseModel):
+    filename: str
+    content: str
+    upload_date: str
+
+class ResumeCreate(ResumeBase):
+    pass
+
+class Resume(ResumeBase):
+    id: int
+
+    class Config:
+        from_attributes = True
