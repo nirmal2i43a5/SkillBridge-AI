@@ -17,7 +17,7 @@ The application is built on a decoupled frontend-backend architecture, container
 
 ## 3. Component Breakdown
 
-### 3.1. Frontend (`src/frontend/app.py`)
+### 3.1. Frontend (`frontend/app.py`)
 
 - **Framework**: Streamlit
 - **Functionality**:
