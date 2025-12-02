@@ -2,6 +2,7 @@
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routes import router
+from .db import init_db
 
 app = FastAPI(title="Resume Skill Matcher", version="0.1.0")
 
@@ -13,6 +14,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Initialize DB
+init_db()
+        
 app.include_router(router)
 
 
