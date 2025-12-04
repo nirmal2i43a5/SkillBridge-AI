@@ -26,65 +26,65 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# --- SIDEBAR ---
-with st.sidebar:
-    st.markdown("### Settings")
+# # --- SIDEBAR ---
+# with st.sidebar:
+#     st.markdown("### Settings")
     
-    st.markdown("#### Job Indexing")
-    load_adzuna_jobs = st.checkbox("Load jobs API", value=True)
+#     st.markdown("#### Job Indexing")
+#     load_adzuna_jobs = st.checkbox("Load jobs API", value=True)
     
-    st.markdown("#### Recommendation")
-    top_k = st.slider("Number of Recommendations", min_value=1, max_value=10, value=5)
+#     st.markdown("#### Recommendation")
+#     top_k = st.slider("Number of Recommendations", min_value=1, max_value=10, value=5)
     
-    st.markdown("---")
+#     st.markdown("---")
     
-    ADZUNA_JOBS_PATH = Path(__file__).resolve().parents[1] / "data" / "processed" / "adzuna_data_jobs.json"
+#     ADZUNA_JOBS_PATH = Path(__file__).resolve().parents[1] / "data" / "processed" / "adzuna_data_jobs.json"
 
-    if load_adzuna_jobs:
-        if st.button("Index Adzuna Jobs"):
-            if not ADZUNA_JOBS_PATH.exists():
-                st.error(f"Error: {ADZUNA_JOBS_PATH.name} not found.")
-                st.info("Please run the data collection script first.")
-            else:
-                with st.spinner("Indexing jobs..."):
-                    try:
-                        with open(ADZUNA_JOBS_PATH, "r", encoding="utf-8") as f:
-                            jobs = json.load(f)
+#     if load_adzuna_jobs:
+#         if st.button("Index Adzuna Jobs"):
+#             if not ADZUNA_JOBS_PATH.exists():
+#                 st.error(f"Error: {ADZUNA_JOBS_PATH.name} not found.")
+#                 st.info("Please run the data collection script first.")
+#             else:
+#                 with st.spinner("Indexing jobs..."):
+#                     try:
+#                         with open(ADZUNA_JOBS_PATH, "r", encoding="utf-8") as f:
+#                             jobs = json.load(f)
 
-                        payload = {"jobs": []}
-                        for job in jobs:
-                            unique_str = job.get("job_url") or f"{job.get('job_title', '')}_{job.get('company', '')}_{job.get('location', '')}"
-                            job_id = hashlib.md5(unique_str.encode()).hexdigest()
+#                         payload = {"jobs": []}
+#                         for job in jobs:
+#                             unique_str = job.get("job_url") or f"{job.get('job_title', '')}_{job.get('company', '')}_{job.get('location', '')}"
+#                             job_id = hashlib.md5(unique_str.encode()).hexdigest()
                             
-                            payload["jobs"].append({
-                                "job_id": job_id,
-                                "title": job.get("job_title"),
-                                "description": job.get("job_description"),
-                                "company": job.get("company"),
-                                "location": job.get("location"),
-                                "url": job.get("job_url"),
-                                "posted_date": job.get("posted_date"),
-                                "category": job.get("category"),
-                                "job_type": job.get("job_type"),
-                                "experience_level": job.get("experience_level"),
-                                "role_type": job.get("role_type"),
-                                "skills": job.get("skills", []),
-                                "tags": job.get("tags", []),
-                            })
+#                             payload["jobs"].append({
+#                                 "job_id": job_id,
+#                                 "title": job.get("job_title"),
+#                                 "description": job.get("job_description"),
+#                                 "company": job.get("company"),
+#                                 "location": job.get("location"),
+#                                 "url": job.get("job_url"),
+#                                 "posted_date": job.get("posted_date"),
+#                                 "category": job.get("category"),
+#                                 "job_type": job.get("job_type"),
+#                                 "experience_level": job.get("experience_level"),
+#                                 "role_type": job.get("role_type"),
+#                                 "skills": job.get("skills", []),
+#                                 "tags": job.get("tags", []),
+#                             })
                         
-                        resp_persist = requests.post(f"{API_URL}/jobs/index/persist", json=payload, timeout=100)
-                        if not resp_persist.ok:
-                            st.error(f"Backend error (persist): {resp_persist.text}")
-                        else:
-                            resp_index = requests.post(f"{API_URL}/jobs/index", json=payload, timeout=100)
-                            if resp_index.ok:
-                                st.success(f"Indexed {resp_index.json().get('indexed')} jobs successfully!")
-                            else:
-                                st.warning(f"Jobs saved, but indexing failed: {resp_index.text}")
-                    except requests.exceptions.ConnectionError as e:
-                        st.error(f"Cannot connect to backend at {API_URL}.")
-                    except Exception as e:
-                        st.error(f"Error processing jobs: {e}")
+#                         resp_persist = requests.post(f"{API_URL}/jobs/index/persist", json=payload, timeout=100)
+#                         if not resp_persist.ok:
+#                             st.error(f"Backend error (persist): {resp_persist.text}")
+#                         else:
+#                             resp_index = requests.post(f"{API_URL}/jobs/index", json=payload, timeout=100)
+#                             if resp_index.ok:
+#                                 st.success(f"Indexed {resp_index.json().get('indexed')} jobs successfully!")
+#                             else:
+#                                 st.warning(f"Jobs saved, but indexing failed: {resp_index.text}")
+#                     except requests.exceptions.ConnectionError as e:
+#                         st.error(f"Cannot connect to backend at {API_URL}.")
+#                     except Exception as e:
+#                         st.error(f"Error processing jobs: {e}")
 
 
 
@@ -96,8 +96,8 @@ col1, col2 = st.columns([1, 1])
 with col1:
     uploaded = st.file_uploader("Upload PDF Resume", type=["pdf"])
 
-# with col2:
-#     text_input = st.text_area("Or paste resume text", height=150, placeholder="Paste your resume content here...")
+with col2:
+    text_input = st.text_area("Or paste resume text", height=150, placeholder="Paste your resume content here...")
 
 analyze_btn = st.button("Find Matching Jobs")
 st.markdown('</div>', unsafe_allow_html=True)
@@ -113,11 +113,11 @@ if analyze_btn:
                 resp = requests.post(
                     f"{API_URL}/recommend/file",
                     files=files,
-                    data={"top_k": top_k},
+                    data={"top_k": 10},
                     timeout=60,
                 )
             elif text_input.strip():
-                payload = {"resume_text": text_input, "top_k": top_k}
+                payload = {"resume_text": text_input, "top_k": 10}
                 resp = requests.post(f"{API_URL}/recommend/text", json=payload, timeout=30)
             else:
                 st.warning("Please upload a PDF or paste resume text.")
