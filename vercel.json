@@ -1,6 +1,5 @@
 {
   "buildCommand": "pip install -r requirements.txt",
-  "outputDirectory": ".",
   "functions": {
     "api/index.py": {
       "runtime": "python3.11"
@@ -8,7 +7,7 @@
   },
   "routes": [
     {
-      "src": "/api/(.*)",
+      "src": "/(.*)",
       "dest": "/api/index.py"
     }
   ]
