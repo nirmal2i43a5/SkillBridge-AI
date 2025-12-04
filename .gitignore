@@ -36,3 +36,7 @@ logs/
 
 notes/
 examples/
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
