@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .routes import router
 from .db import init_db
+from mangum import Mangum#for vercel deployment 
 
 app = FastAPI(title="Resume Skill Matcher", version="0.1.0")
 
@@ -20,6 +21,9 @@ init_db()
 app.include_router(router)
 
 
+
 @app.get("/health")
 async def health() -> dict:
     return {"status": "ok"}
+
+handler = Mangum(app)
