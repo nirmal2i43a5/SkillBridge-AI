@@ -1,5 +1,7 @@
 ﻿import json
 import os
+import re
+import hashlib
 from pathlib import Path
 from typing import List
 
@@ -7,7 +9,7 @@ import requests
 import streamlit as st
 
 # Backend API URL (local by default, can override with env var)
-API_URL = os.getenv("SKILLMATCH_API_URL", "http://localhost:8000")
+API_URL = os.getenv("SKILLMATCH_API_URL", "http://127.0.0.1:8000")
 
 
 # Streamlit Page Setup
@@ -37,8 +39,21 @@ if load_adzuna_jobs and st.sidebar.button("Index Adzuna Jobs"):
             payload = {"jobs": []}
             for job in jobs:
                 # Map all new AdzunaJob fields to the payload
+                job_id = str(job.get("id"))
+                # Fix for missing IDs in Adzuna data
+                if not job_id or job_id == "None":
+                    url = job.get("job_url", "")
+                    # Try to extract ID from URL (e.g. details/5429625850)
+                    match = re.search(r'(?:details|ad)/(\d+)', url)
+                    if match:
+                        job_id = match.group(1)
+                    else:
+                        # Fallback: deterministic hash
+                        unique_str = f"{job.get('job_title')}{job.get('company')}"
+                        job_id = hashlib.md5(unique_str.encode()).hexdigest()
+
                 payload["jobs"].append({
-                    "job_id": str(job.get("id")),
+                    "job_id": job_id,
                     "title": job.get("job_title"),
                     "description": job.get("job_description"),
                     "company": job.get("company"),
@@ -51,6 +66,7 @@ if load_adzuna_jobs and st.sidebar.button("Index Adzuna Jobs"):
                     "role_type": job.get("role_type"),
                     "skills": job.get("skills", []),
                     "tags": job.get("tags", []),
+                    "min_years_experience": job.get("min_years_experience", 0.0),
                 })
 
             resp = requests.post(f"{API_URL}/jobs/index", json=payload, timeout=100)
