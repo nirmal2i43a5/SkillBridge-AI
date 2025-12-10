@@ -23,3 +23,9 @@ watchdog>=6.0
 sqlalchemy>=2.0
 aiosqlite>=0.17
 mangum
+psutil>=5.9.0
+
+
+
+
+

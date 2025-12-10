@@ -23,6 +23,8 @@ setup_logging()
 
 router = APIRouter()
 recommender = ResumeRecommender()
+# Track last index time for status endpoint
+recommender._last_index_time: datetime | None = None
 
 
 # Endpoint: Index Job Postings
@@ -32,6 +34,8 @@ async def index_jobs(payload: IndexJobsRequest) -> dict:
         raise HTTPException(status_code=400, detail="No jobs provided")
     job_objects = [JobPosting(**job.model_dump()) for job in payload.jobs]
     recommender.index_jobs(job_objects)
+    # Track when indexing happened
+    recommender._last_index_time = datetime.now(timezone.utc)
     return {"indexed": len(job_objects)}
 
 

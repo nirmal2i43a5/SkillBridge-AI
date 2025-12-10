@@ -84,3 +84,20 @@ class VectorStore:
 
     def get_payload(self, idx: int) -> str:
         return self._items[idx]
+
+    def get_status(self) -> dict:
+        """Get status information about the vector store"""
+        index_type = None
+        if self._index is not None:
+            if self._use_faiss:
+                index_type = type(self._index).__name__
+            else:
+                index_type = "sklearn NearestNeighbors"
+        
+        return {
+            "vector_count": len(self._items),
+            "dimension": self._dim,
+            "index_type": index_type,
+            "is_initialized": self._index is not None,
+            "backend": "FAISS" if self._use_faiss else "sklearn"
+        }

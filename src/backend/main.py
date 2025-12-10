@@ -1,11 +1,15 @@
-﻿from fastapi import FastAPI
+﻿from datetime import datetime, timezone
+import time
+
+import psutil
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routes import router
 from .db import init_db
 from mangum import Mangum#for vercel deployment 
 
-app = FastAPI(title="Resume Skill Matcher", version="0.1.0")
+app = FastAPI(title="Resume Skill Matcher", version=_API_VERSION)
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,6 +28,7 @@ app.include_router(router)
 
 @app.get("/health")
 async def health() -> dict:
+    """Basic health check endpoint"""
     return {"status": "ok"}
 
 handler = Mangum(app)
