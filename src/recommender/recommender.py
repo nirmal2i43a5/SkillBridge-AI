@@ -1,8 +1,8 @@
 ﻿from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, List, Sequence
+from typing import Iterable, List, Sequence, Set
 
 import logging
 import numpy as np
@@ -25,6 +25,15 @@ class JobPosting:
     description: str
     company: str | None = None
     location: str | None = None
+    url: str | None = None
+    posted_date: str | None = None
+    category: str | None = None
+    job_type: str | None = None
+    experience_level: str | None = None
+    role_type: str | None = None
+    skills: List[str] = field(default_factory=list)
+    tags: List[str] = field(default_factory=list)
+    min_years_experience: float = 0.0
 
 
 @dataclass
@@ -60,25 +69,75 @@ class ResumeRecommender:
         self.vector_store.add_items(embeddings, payloads)
         logger.info("Indexed %d job postings", len(self._job_postings))
 
-    def recommend_for_resume_text(self, resume_text: str, top_k: int = 5) -> List[Recommendation]:
+    def recommend_for_resume_text(
+        self, 
+        resume_text: str, 
+        top_k: int = 5,
+        resume_years_experience: float = 0.0
+    ) -> List[Recommendation]:
         if not self._job_postings:
             raise RuntimeError("No job postings indexed")
+        
         cleaned_resume = self.text_cleaner.clean(resume_text)
+        
         resume_embedding = self.embedding_generator.encode([cleaned_resume])
         retrievals = self.vector_store.search(resume_embedding, k=top_k)[0]
         resume_skills = self.skill_extractor.unique_skills(resume_text)
-        return [self._build_recommendation(item, resume_skills) for item in retrievals]
+        
+        return [
+            self._build_recommendation(item, resume_skills, resume_years_experience) 
+            for item in retrievals
+        ]
 
-    def recommend_for_resume_file(self, path: str | Path, top_k: int = 5) -> List[Recommendation]:
+    def recommend_for_resume_file(
+        self, 
+        path: str | Path, 
+        top_k: int = 5,
+        resume_years_experience: float = 0.0
+    ) -> List[Recommendation]:
         parser = self.pdf_parser or PDFParser()
         text = parser.extract_text(path)
-        return self.recommend_for_resume_text(text, top_k=top_k)
+        return self.recommend_for_resume_text(text, top_k=top_k, resume_years_experience=resume_years_experience)
 
-    def _build_recommendation(self, item: RetrievedItem, resume_skills: Iterable[str]) -> Recommendation:
+    def _build_recommendation(
+        self, 
+        item: RetrievedItem, 
+        resume_skills: Iterable[str],
+        resume_years: float
+    ) -> Recommendation:
         job = self._job_lookup(item.idx)
-        job_skills = set(self.skill_extractor.unique_skills(job.description))
-        matched = sorted(job_skills.intersection(set(resume_skills)))
-        return Recommendation(job=job, score=item.score, matched_skills=matched)
+        
+        # 1. Semantic Score (Cosine Sim)
+        semantic_score = item.score
+        
+        # 2. Skill Overlap Score (Jaccard)
+        job_skills = set(job.skills) if job.skills else set(self.skill_extractor.unique_skills(job.description))
+        resume_skills_set = set(resume_skills)
+        matched_skills = sorted(job_skills.intersection(resume_skills_set))
+        
+        skill_score = 0.0
+        if job_skills:
+            skill_score = len(matched_skills) / len(job_skills)
+            
+        # 3. Experience Score
+        exp_score = self._calculate_experience_score(resume_years, job.min_years_experience)
+        
+        # Hybrid Weighted Score
+        # Weights: Semantic=0.6, Skills=0.2, Experience=0.2
+        final_score = (0.6 * semantic_score) + (0.2 * skill_score) + (0.2 * exp_score)
+        
+        return Recommendation(job=job, score=final_score, matched_skills=matched_skills)
+
+    def _calculate_experience_score(self, resume_years: float, job_min_years: float) -> float:
+        if job_min_years <= 0:
+            return 1.0 # No requirement
+        
+        if resume_years >= job_min_years:
+            return 1.0
+        elif resume_years >= (job_min_years * 0.5):
+            return 0.5
+        else:
+            return 0.0
 
     def _job_lookup(self, vector_idx: int) -> JobPosting:
         job_id = self.vector_store.get_payload(vector_idx)
