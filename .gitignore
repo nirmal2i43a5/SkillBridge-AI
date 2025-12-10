@@ -16,12 +16,12 @@ pip-wheel-metadata/
 .idea/
 
 # Data
-data/processed/*
-data/embeddings/*
-data/raw/*
-!data/processed/.gitkeep
-!data/embeddings/.gitkeep
-!data/raw/.gitkeep
+# data/processed/*
+# data/embeddings/*
+# data/raw/*
+# !data/processed/.gitkeep
+# !data/embeddings/.gitkeep
+# !data/raw/.gitkeep
 
 # Notebooks
 .ipynb_checkpoints/
