@@ -6,6 +6,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routes import router, recommender
+from .db import init_db
+
+# Initialize database tables
+init_db()
 
 # Track startup time for uptime calculation
 _start_time = time.time()
