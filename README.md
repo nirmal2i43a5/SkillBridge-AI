@@ -16,7 +16,7 @@ SkillBridge AI is an end-to-end intelligent resume analysis and job-matching pla
 
 By combining a real-time resume analysis pipeline with an offline job ingestion and embedding process, SkillBridge AI mirrors the workflows used by modern Applicant Tracking Systems (ATS) and internal recruitment platforms.
 
-✔ For Recruiters (Internal Users)
+### For Recruiters (Internal Users)
 
 - Recruiters can upload individual or bulk resumes and instantly view:
 
@@ -30,7 +30,7 @@ Ranked recommendations across departments
 
 This dramatically reduces manual screening time and improves consistency in evaluating candidates.
 
-✔ For Candidates (External Users)
+### For Candidates (Job Seekers)
 
 - Job seekers can upload their resumes through the web interface and immediately receive:
 - A personalized list of recommended jobs within the company
