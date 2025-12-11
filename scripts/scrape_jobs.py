@@ -1,47 +1,52 @@
-﻿
-"""Fetch RemoteOK job listings into JSON."""
-import argparse
+﻿import argparse
 from pathlib import Path
-
-
-# run once, near the top of your notebook
 import sys
-repo_root = Path(__file__).resolve().parents[1] if "__file__" in globals() else Path.cwd().parents[1]
-if str(repo_root) not in sys.path:
-    sys.path.append(str(repo_root))
-    
-from src.data_collection.remoteok_api import fetch_to_json
+
+# Add project root to the Python path
+project_root = Path(__file__).resolve().parents[1]
+if str(project_root) not in sys.path:
+    sys.path.append(str(project_root))
+
+from src.data_collection.adzuna_client import fetch_all_data_jobs
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Fetch RemoteOK job postings")
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(description="Adzuna Job Posting Scraper")
     parser.add_argument(
-        "--keyword",
-        help="Case-insensitive keyword filter applied to title and description",
+        "--pages", type=int, default=5, help="Number of pages to fetch per role."
     )
     parser.add_argument(
-        "--tag",
-        action="append",
-        dest="tags",
-        help="Filter by tag (repeatable). Example: --tag python",
+        "--location", type=str, default="Canada", help="Geographic location for job search."
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("data/processed/jobs.json"),
-        help="Destination JSON file",
+        default=project_root / "data" / "processed" / "adzuna_data_jobs_new.json",
+        help="Path to save the output JSON file.",
     )
     return parser.parse_args()
 
 
 def main() -> None:
+    """Main function to run the scraper."""
+    
     args = parse_args()
-    count = fetch_to_json(
-        keyword=args.keyword,
-        tags=args.tags,
-        output_path=args.output,
+    print(f"Starting Adzuna job fetcher...")
+    print(f" - Location: {args.location}")
+    print(f" - Pages per role: {args.pages}")
+    print(f" - Output file: {args.output}")
+
+    # Define common stopwords to improve text cleaning
+    stopwords = ["the", "a", "an", "and", "or", "in", "on", "for", "to"]
+    
+    fetch_all_data_jobs(
+        pages_per_role=args.pages,
+        location=args.location,
+        output_path=str(args.output),
+        stopwords=stopwords,
     )
-    print(f"Stored {count} job postings into {args.output}")
+    print("Job fetching complete.")
 
 
 if __name__ == "__main__":

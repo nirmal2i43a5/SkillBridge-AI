@@ -7,8 +7,8 @@ from typing import Iterable, List, Sequence, Set
 import logging
 import numpy as np
 
-from ..features.embedding_generator import EmbeddingGenerator
-from ..features.vector_store import RetrievedItem, VectorStore
+from ..embeddings.text_embedder import TextEmbedder
+from ..storage.vector_store import RetrievedItem, VectorStore
 from ..ocr.pdf_parser import PDFParser
 from ..preprocessing.skill_extractor import SkillExtractor
 from ..preprocessing.text_cleaner import TextCleaner
@@ -20,6 +20,7 @@ setup_logging()
 
 @dataclass
 class JobPosting:
+    """Represents a job posting with enriched metadata."""
     job_id: str
     title: str
     description: str
@@ -46,13 +47,13 @@ class Recommendation:
 class ResumeRecommender:
     def __init__(
         self,
-        embedding_generator: EmbeddingGenerator | None = None,
+        embedding_generator: TextEmbedder | None = None,
         vector_store: VectorStore | None = None,
         text_cleaner: TextCleaner | None = None,
         skill_extractor: SkillExtractor | None = None,
         pdf_parser: PDFParser | None = None,
     ) -> None:
-        self.embedding_generator = embedding_generator or EmbeddingGenerator()
+        self.embedding_generator = embedding_generator or TextEmbedder()
         self.vector_store = vector_store or VectorStore()
         self.text_cleaner = text_cleaner or TextCleaner()
         self.skill_extractor = skill_extractor or SkillExtractor()
@@ -62,7 +63,6 @@ class ResumeRecommender:
     def index_jobs(self, job_postings: Sequence[JobPosting]) -> None:
         self._job_postings = list(job_postings)
         cleaned = [self.text_cleaner.clean(job.description) for job in self._job_postings]
-        self.embedding_generator.fit_corpus(cleaned)
         embeddings = self.embedding_generator.encode(cleaned)
         payloads = [job.job_id for job in self._job_postings]
         self.vector_store.reset()
@@ -81,7 +81,7 @@ class ResumeRecommender:
         cleaned_resume = self.text_cleaner.clean(resume_text)
         
         resume_embedding = self.embedding_generator.encode([cleaned_resume])
-        retrievals = self.vector_store.search(resume_embedding, k=top_k)[0]
+        retrievals = self.vector_store.search(resume_embedding, k=top_k)[0]#perform similarity search
         resume_skills = self.skill_extractor.unique_skills(resume_text)
         
         return [

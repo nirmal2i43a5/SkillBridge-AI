@@ -1,57 +1,32 @@
-﻿
-from __future__ import annotations
-from dataclasses import dataclass
-from typing import List, Sequence, Set
-import re
+import os
+from dotenv import load_dotenv
 
-@dataclass
-class SkillMatch:
-    skill: str
-    occurrences: int
+load_dotenv()
 
-
-class SkillExtractor:
-    """Improved skill extractor with fuzzy normalization and punctuation-tolerant matching."""
-
-    def __init__(self, skills: Sequence[str] | None = None) -> None:
-        base_skills = [s.strip().lower() for s in (skills or DEFAULT_SKILLS)]
-        base_skills = list(dict.fromkeys(base_skills))  # deduplicate
-        self._skills = {s.lower(): s for s in base_skills}
-        self._pattern = self._build_pattern(base_skills)
-
-    @staticmethod
-    def _build_pattern(skills: Sequence[str]) -> re.Pattern[str]:
-        """Build regex that tolerates punctuation, hyphens, and underscores."""
-        escaped = sorted(skills, key=len, reverse=True)
-        # Match multiword skills separated by optional punctuation/spaces
-        pattern = r"(?<!\w)(" + "|".join(
-            re.escape(skill).replace(r"\ ", r"[\s_\-/]+") for skill in escaped
-        ) + r")(?!\w)"
-        return re.compile(pattern, re.IGNORECASE)
-
-    def _normalize_text(self, text: str) -> str:
-        """Lowercase, remove excessive punctuation, normalize spaces."""
-        text = text.lower()
-        text = re.sub(r"[^a-z0-9\s\+\#\-/]", " ", text)
-        text = re.sub(r"\s+", " ", text)
-        return text.strip()
-
-    def extract(self, text: str) -> List[SkillMatch]:
-        
-        """Extract skills from text (case-insensitive, punctuation-tolerant)."""
-        normalized = self._normalize_text(text)
-        counts: dict[str, int] = {}
-        for match in self._pattern.findall(normalized):
-            key = match.lower().strip()
-            canonical = self._skills.get(key, key)
-            counts[canonical] = counts.get(canonical, 0) + 1
-        return [SkillMatch(skill=s, occurrences=c) for s, c in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))]
-
-    def unique_skills(self, text: str) -> Set[str]:
-        return {m.skill for m in self.extract(text)}
+APP_ID = os.getenv("APP_ID")
+APP_KEY = os.getenv("APP_KEY")
+COUNTRY = "ca"
+BASE_URL = os.getenv("BASE_URL", f"https://api.adzuna.com/v1/api/jobs/{COUNTRY}/search/")
 
 
-DEFAULT_SKILLS: List[str] = [
+DATA_ROLE_QUERIES = [
+    "data scientist",
+    "data engineer",
+    "data analyst",
+    "machine learning engineer",
+    "ml engineer",
+    "mlops engineer",
+    "devops engineer",
+    "software engineer",
+    "ai engineer",
+    "generative ai engineer",
+    "analytics engineer",
+    "bi developer",
+    "business intelligence developer",
+    "research scientist",
+]
+
+DATA_PROFESSIONAL_SKILLS = [
     # --- Software Engineering: Languages ---
     "python", "javascript", "typescript", "java", "c++", "c", "c#", "go", "golang", "rust",
     "swift", "kotlin", "ruby", "php", "scala", "julia", "lua", "shell", "bash",

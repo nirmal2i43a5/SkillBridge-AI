@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+    --primary-blue: #1E3A8A;
+    --secondary-blue: #3B82F6;
+    --light-blue: #EFF6FF;
+    --white: #FFFFFF;
+    --text-dark: #1F2937;
+    --text-light: #6B7280;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+}
+
+/* Main Background */
+.stApp {
+    background-color: #F3F4F6;
+}
+
+/* Header */
+.main-header {
+    background: linear-gradient(90deg, #1E3A8A 0%, #2563EB 100%);
+    padding: 2rem;
+    border-radius: 0 0 1rem 1rem;
+    color: white;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    text-align: center;
+}
+.main-header h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin: 0;
+    color: white !important;
+}
+.main-header p {
+    opacity: 0.9;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+    color: white !important;
+}
+
+/* Cards */
+.card-container {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+}
+
+/* Buttons */
+.stButton > button {
+    background-color: var(--secondary-blue) !important;
+    color: white !important;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 700 !important;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+.stButton > button:hover {
+    background-color: #2563EB !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transform: translateY(-1px);
+}
+.stButton > button p {
+    color: white !important;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #F8FAFC;
+    border-right: 1px solid #E5E7EB;
+}
+
+/* Chips */
+.chip {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.chip-blue {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+}
+.chip-green {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+/* Job Card Specifics */
+.job-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #E5E7EB;
+    padding-bottom: 1rem;
+}
+.job-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin: 0;
+}
+.job-company {
+    font-size: 1rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+.metric-box {
+    background-color: #F9FAFB;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    border: 1px solid #E5E7EB;
+}
+.metric-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.metric-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+/* Global Text Reset for Content */
+.stMarkdown p, .stMarkdown li, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6,
+.stText, .stTextInput label, .stTextArea label, .stFileUploader label, .stSelectbox label, .stSlider label, .stCheckbox label {
+    color: #1F2937 !important;
+}
+
+/* Input Fields (Text Input, Text Area) */
+.stTextInput > div > div > input, 
+.stTextArea > div > div > textarea {
+    background-color: #FFFFFF !important;
+    color: #1F2937 !important;
+    border: 1px solid #E5E7EB !important;
+    caret-color: #1F2937 !important;
+}
+
+/* File Uploader */
+[data-testid="stFileUploader"] {
+    background-color: #FFFFFF !important;
+    border: 1px solid #E5E7EB !important;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+[data-testid="stFileUploader"] section {
+    background-color: #F9FAFB !important;
+}
+[data-testid="stFileUploader"] .uploadedFile {
+    background-color: #F3F4F6 !important;
+    color: #1F2937 !important;
+}
+[data-testid="stFileUploader"] small {
+    color: #6B7280 !important;
+}
+[data-testid="stFileUploader"] button {
+    background-color: var(--secondary-blue) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 700 !important;
+}
+[data-testid="stFileUploader"] button:hover {
+    background-color: #2563EB !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Card Headers & Content */
+.card-container h1, .card-container h2, .card-container h3, .card-container h4, .card-container p, .card-container span, .card-container div {
+    color: #1F2937 !important;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #F8FAFC !important;
+}
+[data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label, [data-testid="stSidebar"] div, [data-testid="stSidebar"] p {
+    color: #1F2937 !important;
+}
+
+/* Fix for placeholder text */
+::placeholder {
+    color: #9CA3AF !important;
+    opacity: 1 !important;
+}
+
+/* Restore Header Text Color - Specific Override */
+.main-header h1, .main-header p {
+    color: #FFFFFF !important;
+}
+
+/* Restore Button Text Color - Specific Override */
+.stButton > button, .stButton > button p {
+    color: #FFFFFF !important;
+}

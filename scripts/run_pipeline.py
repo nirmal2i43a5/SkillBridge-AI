@@ -1,15 +1,13 @@
-﻿#!/usr/bin/env python
-"""CLI helper to run the end-to-end recommendation pipeline."""
-import argparse
+﻿import argparse
 import json
 from pathlib import Path
 
-from src.features.embedding_generator import EmbeddingGenerator
+from src.embeddings.text_embedder import TextEmbedder
 from src.recommender.recommender import JobPosting, ResumeRecommender
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Resume → Job recommendation pipeline")
+    parser = argparse.ArgumentParser(description="Resume -> Job recommendation pipeline")
     parser.add_argument("resume", type=Path, help="Path to resume text file")
     parser.add_argument("jobs", type=Path, help="Path to JSON job postings (list of dicts)")
     parser.add_argument("--top-k", type=int, default=5)
@@ -22,7 +20,7 @@ def main() -> None:
     job_payload = json.loads(args.jobs.read_text(encoding="utf-8"))
     jobs = [JobPosting(**entry) for entry in job_payload["jobs"]]
 
-    recommender = ResumeRecommender(embedding_generator=EmbeddingGenerator(prefer_tfidf=True))
+    recommender = ResumeRecommender(embedding_generator=TextEmbedder())
     recommender.index_jobs(jobs)
     recommendations = recommender.recommend_for_resume_text(resume_text, top_k=args.top_k)
 

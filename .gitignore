@@ -16,12 +16,14 @@ pip-wheel-metadata/
 .idea/
 
 # Data
-# data/processed/*
-# data/embeddings/*
-# data/raw/*
-# !data/processed/.gitkeep
-# !data/embeddings/.gitkeep
-# !data/raw/.gitkeep
+data/processed/*
+data/embeddings/*
+data/raw/*
+!data/processed/.gitkeep
+!data/embeddings/.gitkeep
+!data/raw/.gitkeep
+!data/processed/adzuna_data_jobs.json
+!data/processed/test_10_jobs.json
 
 # Notebooks
 .ipynb_checkpoints/
@@ -36,3 +38,9 @@ logs/
 
 notes/
 examples/
+*.sqlite3
+*.db
+*.sqlite3-journal
+*.db-shm 
+*.db-wal
+.vercel

@@ -5,13 +5,10 @@ from typing import List, Sequence
 
 import logging
 import numpy as np
+import faiss 
 
-try:
-    import faiss  # type: ignore
-except ImportError:  # pragma: no cover
-    faiss = None  # type: ignore
 
-from sklearn.neighbors import NearestNeighbors
+
 
 from ..utils.logging_utils import setup_logging
 
@@ -26,7 +23,7 @@ class RetrievedItem:
 
 
 class VectorStore:
-    """Abstraction over FAISS or sklearn nearest-neighbour search."""
+
 
     def __init__(self) -> None:
         self._index = None
@@ -34,10 +31,9 @@ class VectorStore:
         self._dim: int | None = None
         self._use_faiss = faiss is not None
         self._sk_embeddings: np.ndarray | None = None
-        if self._use_faiss:
-            logger.info("VectorStore using FAISS backend")
-        else:
-            logger.info("VectorStore using sklearn NearestNeighbors backend")
+        
+        logger.info("VectorStore using FAISS backend")
+       
 
     def reset(self) -> None:
         self._index = None
@@ -50,12 +46,13 @@ class VectorStore:
             raise ValueError("Embeddings must be 2D array")
         if len(payloads) != embeddings.shape[0]:
             raise ValueError("Payload length mismatch")
+        
         self._dim = embeddings.shape[1]
         self._items.extend(payloads)
+        
         if self._use_faiss:
             self._add_with_faiss(embeddings)
-        else:
-            self._add_with_sklearn(embeddings)
+        
 
     def _add_with_faiss(self, embeddings: np.ndarray) -> None:
         assert self._dim is not None
@@ -64,25 +61,22 @@ class VectorStore:
         faiss.normalize_L2(embeddings)
         self._index.add(embeddings.astype(np.float32))
 
-    def _add_with_sklearn(self, embeddings: np.ndarray) -> None:
-        new_embeddings = embeddings.astype(np.float32)
-        if self._sk_embeddings is None:
-            self._sk_embeddings = new_embeddings
-        else:
-            self._sk_embeddings = np.vstack([self._sk_embeddings, new_embeddings])
-        if self._index is None:
-            self._index = NearestNeighbors(metric="cosine")
-        self._index.fit(self._sk_embeddings)
+    # def _add_with_sklearn(self, embeddings: np.ndarray) -> None:
+    #     new_embeddings = embeddings.astype(np.float32)
+    #     if self._sk_embeddings is None:
+    #         self._sk_embeddings = new_embeddings
+    #     else:
+    #         self._sk_embeddings = np.vstack([self._sk_embeddings, new_embeddings])
+    #     if self._index is None:
+    #         self._index = NearestNeighbors(metric="cosine")
+    #     self._index.fit(self._sk_embeddings)
 
     def search(self, query_embeddings: np.ndarray, k: int = 5) -> List[List[RetrievedItem]]:
         if self._index is None:
             raise RuntimeError("Vector index is empty; call add_items first")
         if self._use_faiss:
             scores, indices = self._index.search(query_embeddings.astype(np.float32), k)
-        else:
-            n_neighbors = min(k, len(self._items))
-            distances, indices = self._index.kneighbors(query_embeddings, n_neighbors=n_neighbors)
-            scores = 1 - distances
+     
         return [
             [RetrievedItem(idx=int(idx), score=float(score)) for idx, score in zip(idx_row, score_row) if idx != -1]
             for idx_row, score_row in zip(indices, scores)

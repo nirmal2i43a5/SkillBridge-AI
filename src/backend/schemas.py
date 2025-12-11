@@ -22,7 +22,6 @@ class JobPostingCreate(JobPostingBase):
     pass
 
 class JobPosting(JobPostingBase):
-    # Pydantic v2 config
     model_config = ConfigDict(from_attributes=True)
 
 class IndexJobsRequest(BaseModel):

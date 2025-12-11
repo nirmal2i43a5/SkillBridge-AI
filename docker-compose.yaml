@@ -7,12 +7,25 @@ services:
       - "8000:8000"
     environment:
       - PYTHONPATH=/app
+    volumes:
+      - ./jobs.db:/app/jobs.db
   frontend:
     build: .
     command: streamlit run src/frontend/app.py --server.port=8501 --server.address=0.0.0.0
     ports:
       - "8501:8501"
     environment:
-      - SKILLMATCH_API_URL=http://backend:8000
+      - FASTAPI_URL=http://backend:8000
     depends_on:
       - backend
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
