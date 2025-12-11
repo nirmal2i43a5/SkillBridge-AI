@@ -1,81 +1,161 @@
-# SkillBridge AI
+# Smart Resume Analyzer & Job Matcher
 
-## 1. Project Overview
+> **Automate your recruitment workflow with AI-powered resume parsing and intelligent job matching.**
 
-The SkillBridge AI is an end-to-end system that parses resumes, extracts key skills, and recommends the most relevant job postings from a corpus. It features a web-based interface for resume submission and a RESTful API for managing job data and generating recommendations. The core of the system lies in its ability to generate semantic embeddings for both resumes and job descriptions, enabling efficient similarity-based matching.
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.95%2B-green)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.22%2B-red)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)
 
-## 2. System Architecture
+---
 
-The application is built on a decoupled frontend-backend architecture, containerized with Docker for portability and ease of deployment.
+## Project Context
 
-- **Frontend**: A Streamlit web application provides a user-friendly interface for uploading resumes (PDF or raw text) and viewing job recommendations.
-- **Backend**: A FastAPI server exposes RESTful endpoints for indexing job postings and retrieving recommendations.
-- **Recommender Engine**: The core logic, encapsulated within the backend, handles PDF parsing, text processing, skill extraction, embedding generation, and similarity search.
-- **Data Storage**: Job postings are ingested from external sources (e.g., Adzuna API) and stored as JSON files. Vector embeddings are managed in-memory using FAISS for fast retrieval.
+SkillBridge AI is an end-to-end intelligent resume analysis and job-matching platform designed to support both recruiters and candidates. The system automates resume processing, extracts key skills and experience, and matches candidates to the company’s active job openings using semantic similarity and vector search.
 
-  ![Skill-Matches workflow](https://github.com/user-attachments/assets/6d8c6354-5569-4950-843f-f03909f1cfea)
+By combining a real-time resume analysis pipeline with an offline job ingestion and embedding process, SkillBridge AI mirrors the workflows used by modern Applicant Tracking Systems (ATS) and internal recruitment platforms.
 
-## 3. Component Breakdown
+✔ For Recruiters (Internal Users)
 
-### 3.1. Frontend (`frontend/app.py`)
+- Recruiters can upload individual or bulk resumes and instantly view:
 
-- **Framework**: Streamlit
-- **Functionality**:
-  - Allows users to upload a resume in PDF format or paste raw text.
-  - Provides an interface to trigger the indexing of job postings from a predefined JSON file.
-  - Displays a list of recommended jobs, including match score, company, location, and matched skills.
-  - Communicates with the backend via HTTP requests to the FastAPI endpoints.
+Structured candidate profiles
 
-### 3.2. Backend (`src/backend/`)
+Extracted skills, keywords, and experience
 
-- **Framework**: FastAPI**Key Endpoints** (`src/backend/routes.py`):
-- - `POST /jobs/index`: Accepts a list of job postings in JSON format, processes them, and creates vector embeddings for storage.
-  - `POST /recommend/text`: Takes raw resume text and returns a list of top matching job postings.
-  - `POST /recommend/file`: Accepts a PDF file, extracts the text, and returns job recommendations.
+Job match scores for open internal positions
 
-### 3.3. Data Ingestion (`src/data_ingestion/`)The system can ingest job data from external sources like the Adzuna API.
+Ranked recommendations across departments
 
-- Ingested data is processed and stored in a structured JSON format (`data/processed/adzuna_data_jobs.json`).
+This dramatically reduces manual screening time and improves consistency in evaluating candidates.
 
-### 3.4. Recommender Engine (`src/recommender/recommender.py`)
+✔ For Candidates (External Users)
 
-This is the core component responsible for the matching logic.
+- Job seekers can upload their resumes through the web interface and immediately receive:
+- A personalized list of recommended jobs within the company
+- Skill-based match insights
+- Suggested roles aligned with their experience
 
-- **PDF Parsing** (`src/ocr/pdf_parser.py`): Extracts raw text from PDF resumes using `pdfplumber`.
-- **Text Preprocessing** (`src/preprocessing/`):
-  - `text_cleaner.py`: Cleans and normalizes the text from resumes and job descriptions.
-  - `skill_extractor.py`: Identifies and extracts technical skills from the text.
-- **Embedding Generation** (`src/embeddings/text_embedder.py`):
-  - Uses the `multi-qa-MiniLM-L6-cos-v1` model from the `sentence-transformers` library to convert text into dense vector embeddings.
-- **Vector Storage & Search** (`src/storage/vector_store.py`):
-  - Employs `FAISS` (Facebook AI Similarity Search) for efficient in-memory storage and retrieval of job description embeddings.
-  - Performs a similarity search (Inner Product) between the resume embedding and the indexed job embeddings to find the best matches.
+This creates a user-friendly experience similar to major job platforms.
 
-## 4. Core Technologies
+## Key Features
 
-- **Backend**: Python, FastAPI
-- **Frontend**: Streamlit
-- **ML/NLP**:
-  - `sentence-transformers`: For generating semantic embeddings.
-  - `faiss-cpu`: For high-speed similarity search.
-  - `scikit-learn`: For utility functions.
-  - `numpy`, `pandas`: For data manipulation.
-- **PDF Processing**: `pdfplumber`, `PyPDF2`
-- **Containerization**: Docker, Docker Compose
+- **PDF Resume Parsing**: Automatically extracts text, skills, and experience years from PDF documents.
+- **Intelligent Matching**: Uses FAISS vector search to find the semantic match between resumes and job descriptions.
+- **Candidate Profiling**: Structured data storage for every candidate in MongoDB.
+- **Real-time Recommendations**: Get instant top-K job recommendations with match likelihood scores.
+- **Interactive Dashboard**: A polished User Interface for seamless interaction.
 
-## 5. Setup and Usage
+---
 
-1. **Prerequisites**: Docker and Docker Compose must be installed.
-2. **Installation**: Clone the repository and build the Docker containers:
-   ```bash
-   git clone https://github.com/nirmal2i43a5/Skill-Match.git](https://github.com/nirmal2i43a5/SkillMatcher.git
-   cd resume-skill-matcher
-   docker-compose build
-   ```
-3. **Running the Application**:
-   ```bash
-   docker-compose up
-   ```
-4. **Accessing the Services**:
-   - **Frontend**: `http://localhost:8501`
-   - **Backend API Docs**: `http://localhost:8000/docs`
+## Data Ingestion Pipeline
+
+The system uses a robust pipeline to ingest, process, and index job data:
+
+![alt text](image/data_ingestion_pipeline.png)
+
+## Real Time Pipeline Architecture
+
+![alt text](<image/system architecture.png>)
+
+---
+
+## Some User Interface
+
+> **Place your Streamlit screenshots here to show off the interface.**
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)
+
+---
+
+## Quick Start
+
+### 1. Clone & Setup
+
+```bash
+git clone https://github.com/nirmal2i43a5/SkillBridge-AI.git
+cd resume-matcher
+
+# Create and activate virtual environment
+python -m venv venv
+# Windows
+.\env\Scripts\activate
+
+# Mac/Linux
+source venv/bin/activate
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configure Environment
+
+Create a `.env` file in the root directory:
+
+```properties
+MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority
+MONGO_USERNAME=<user>
+MONGO_PASSWORD=<password>
+MONGO_CLUSTER=<cluster_address>
+APP_KEY=<jobs_api_key>
+```
+
+### 4. Run the Application
+
+**Terminal 1 (Backend):**
+
+```bash
+python scripts/run_backend.py
+```
+
+**Terminal 2 (Frontend):**
+
+```bash
+python scripts/run_frontend.py
+```
+
+Visit **http://localhost:8501** to start matching!
+
+---
+
+## API Endpoints
+
+The backend exposes the following RESTful endpoints (default port: `8000`):
+
+| Method   | Endpoint                | Description                                   |
+| :------- | :---------------------- | :-------------------------------------------- |
+| `POST` | `/jobs/index`         | Index jobs into FAISS and MongoDB.            |
+| `POST` | `/jobs/index/persist` | Persist jobs to MongoDB only (no indexing).   |
+| `POST` | `/recommend/file`     | Upload PDF resume to get job recommendations. |
+| `POST` | `/recommend/text`     | Paste resume text to get job recommendations. |
+
+---
+
+## Project Structure
+
+```
+resume-matcher/
+├── frontend/             # Streamlit UI Application
+│   ├── app.py           # Main Entry Point
+│   └── static/          # Custom CSS
+├── src/
+│   ├── backend/         # FastAPI Application
+│   │   ├── db/          # MongoDB & Models
+│   │   ├── routes.py    # API Endpoints
+│   │   └── services/    # Business Logic
+│   ├── recommender/     # Matching Engine (FAISS)
+│   ├── data_ingestion/  # Data Pipeline Scripts
+│   └── preprocessing/   # Text & PDF Processing
+├── data/                # Data Assets (Jobs JSON)
+├── tests/               # Unit Tests
+├── scripts/             # Runner Scripts
+├── Dockerfile           # Docker Image Config
+├── docker-compose.yaml  # Container Orchestration
+└── requirements.txt     # Dependency List
+```
