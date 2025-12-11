@@ -53,11 +53,14 @@ This creates a user-friendly experience similar to major job platforms.
 
 The system uses a robust pipeline to ingest, process, and index job data:
 
-![alt text](image/data_ingestion_pipeline.png)
+<img width="1674" height="1479" alt="data_ingestion_pipeline" src="https://github.com/user-attachments/assets/3d652e5a-fe68-499b-ac01-cc3ab9a2df85" />
+
 
 ## Real Time Pipeline Architecture
 
-![alt text](<image/system architecture.png>)
+<img width="2732" height="1054" alt="system architecture" src="https://github.com/user-attachments/assets/fe95e6a4-fc0f-4034-8e56-4644a6402e4e" />
+
+
 
 ---
 
