@@ -16,7 +16,7 @@ SkillBridge AI is an end-to-end intelligent resume analysis and job-matching pla
 
 By combining a real-time resume analysis pipeline with an offline job ingestion and embedding process, SkillBridge AI mirrors the workflows used by modern Applicant Tracking Systems (ATS) and internal recruitment platforms.
 
-✔ For Recruiters (Internal Users)
+### For Recruiters (Internal Users)
 
 - Recruiters can upload individual or bulk resumes and instantly view:
 
@@ -30,7 +30,7 @@ Ranked recommendations across departments
 
 This dramatically reduces manual screening time and improves consistency in evaluating candidates.
 
-✔ For Candidates (External Users)
+### For Candidates (Job Seekers)
 
 - Job seekers can upload their resumes through the web interface and immediately receive:
 - A personalized list of recommended jobs within the company
@@ -53,11 +53,14 @@ This creates a user-friendly experience similar to major job platforms.
 
 The system uses a robust pipeline to ingest, process, and index job data:
 
-![alt text](image/data_ingestion_pipeline.png)
+<img width="1674" height="1479" alt="data_ingestion_pipeline" src="https://github.com/user-attachments/assets/3d652e5a-fe68-499b-ac01-cc3ab9a2df85" />
+
 
 ## Real Time Pipeline Architecture
 
-![alt text](<image/system architecture.png>)
+<img width="2732" height="1054" alt="system architecture" src="https://github.com/user-attachments/assets/fe95e6a4-fc0f-4034-8e56-4644a6402e4e" />
+
+
 
 ---
 
@@ -99,7 +102,7 @@ pip install -r requirements.txt
 Create a `.env` file in the root directory:
 
 ```properties
-MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net
 MONGO_USERNAME=<user>
 MONGO_PASSWORD=<password>
 MONGO_CLUSTER=<cluster_address>
