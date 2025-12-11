@@ -71,7 +71,8 @@ The system uses a robust pipeline to ingest, process, and index job data:
 <img width="1912" height="751" alt="image" src="https://github.com/user-attachments/assets/72c2409a-f819-4646-b50c-8d9f78d9ef34" />
 
 
-![alt text](image-2.png)
+<img width="1857" height="500" alt="2" src="https://github.com/user-attachments/assets/7531659e-ee93-40cc-9852-2f19473896b5" />
+
 
 ---
 
