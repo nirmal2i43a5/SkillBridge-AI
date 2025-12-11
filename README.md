@@ -102,7 +102,7 @@ pip install -r requirements.txt
 Create a `.env` file in the root directory:
 
 ```properties
-MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net
 MONGO_USERNAME=<user>
 MONGO_PASSWORD=<password>
 MONGO_CLUSTER=<cluster_address>
