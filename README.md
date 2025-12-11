@@ -68,7 +68,8 @@ The system uses a robust pipeline to ingest, process, and index job data:
 
 > **Place your Streamlit screenshots here to show off the interface.**
 
-![alt text](image-1.png)
+<img width="1912" height="751" alt="image" src="https://github.com/user-attachments/assets/72c2409a-f819-4646-b50c-8d9f78d9ef34" />
+
 
 ![alt text](image-2.png)
 
